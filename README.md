@@ -1,139 +1,174 @@
-# 🦀 Crab of Fortune
+# 🦀 Crab of Fortune - Multi-Realms of Wisdom
 
-A fun fortune-telling game featuring a friendly crab who predicts your future!
+A mystical, interactive fortune-telling experience designed for Raspberry Pi, featuring beautiful artwork, text-to-speech, and three distinct realms of wisdom.
 
-## Features
-- **Spiritual fortune-telling experience** - Deep, meaningful wisdom
-- **Ancient crab wisdom** - Connecting to timeless knowledge
-- **Beautiful, clean interface** - Modern design with nostalgic charm
-- **Text-to-speech audio** - Hear your fortune spoken aloud 🎤
-- **Spiritual depth** - Fortunes that speak to the soul
-- **Nostalgic themes** - Longing for simpler, more meaningful times
-- Raspberry Pi compatible!
+## ✨ Features
 
-## Installation
+### 🎭 Multi-Page Interface
+- **START Screen**: Beautiful artwork with invisible click zones
+- **Turtle Realm**: Numerology and angel number messages
+- **Crab Realm**: Deep spiritual wisdom and guidance
+- **Rat Realm**: Passionate love readings and romantic insights
 
-### On Regular Computer
-1. Make sure you have Python 3.x installed on your system
-2. Install the required dependencies:
-```bash
-pip install -r requirements.txt
+### 🎤 Audio System
+- **Different Voices**: Each animal has a unique voice personality
+- **Immediate Playback**: No delays, audio starts instantly
+- **Text-to-Speech**: Uses `spd-say` for reliable audio on Raspberry Pi
+- **Voice Characteristics**:
+  - 🐢 **Turtle**: Slow, wise, deep female voice
+  - 🦀 **Crab**: Mystical, medium-paced male voice
+  - 🐀 **Rat**: Passionate, comfortable-paced female voice
+
+### 🖼️ Visual Experience
+- **Fullscreen Mode**: Borderless, immersive display
+- **Dynamic Scaling**: Automatically fits any screen resolution
+- **Beautiful Artwork**: High-quality background images for each realm
+- **Clean Interface**: No cluttered buttons, pure art experience
+
+### ⏰ User Experience
+- **20-Second Timer**: Comfortable time to absorb each message
+- **Auto-Return**: Automatically returns to choice screen
+- **Invisible Click Zones**: Art remains visible while being interactive
+- **ESC Key**: Easy exit from fullscreen mode
+
+## 🚀 Installation
+
+### Prerequisites
+- Raspberry Pi running Ubuntu LTS
+- Python 3.8+
+- Pygame library
+- Audio system with `spd-say` support
+
+### Quick Setup
+1. **Clone the repository**:
+   ```bash
+   git clone <your-repo-url>
+   cd crab_of_fortune
+   ```
+
+2. **Deploy to Raspberry Pi**:
+   ```bash
+   ./deploy_to_pi.sh
+   ```
+
+3. **Run the game**:
+   ```bash
+   ssh superquarters@192.168.1.66
+   cd crab_of_fortune
+   source venv/bin/activate
+   python3 main.py
+   ```
+
+## 🎮 How to Play
+
+1. **Start Screen**: Click on any of the three animals (Turtle, Crab, or Rat)
+2. **Fortune Display**: Your fortune appears immediately with audio
+3. **Listen & Read**: Absorb the wisdom for 20 seconds
+4. **Auto-Return**: Automatically returns to choice screen
+5. **Choose Again**: Select a different animal for new insights
+6. **Exit**: Press ESC key to quit
+
+## 🏗️ Project Structure
+
+```
+crab_of_fortune/
+├── main.py                 # Main game logic and interface
+├── fortune_speaker.py      # Text-to-speech system
+├── fortunes.py             # Crab realm spiritual fortunes
+├── turtle_fortunes.py      # Turtle realm numerology messages
+├── rat_fortunes.py         # Rat realm love readings
+├── deploy_to_pi.sh         # Deployment script for Raspberry Pi
+├── install_on_pi.sh        # Pi setup and dependency installation
+├── requirements.txt        # Python dependencies
+├── START.jpg              # Main menu background
+├── turtle.jpg             # Turtle realm background
+├── crab.jpg               # Crab realm background
+├── rat.jpg                # Rat realm background
+└── README.md              # This file
 ```
 
-### On Raspberry Pi
-1. First, install required system packages:
-```bash
-sudo apt-get update
-sudo apt-get install -y python3-pip python3-pygame
-```
+## 🔧 Technical Details
 
-2. Install SDL dependencies (if not already installed):
-```bash
-sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
-```
+### Audio System
+- **Primary Engine**: `spd-say` (Speech Dispatcher)
+- **Fallback Engines**: `espeak`, `festival`
+- **Voice Control**: Rate, pitch, and voice type customization
+- **Volume Management**: Automatic 70% volume setting
 
-## Running the Game
+### Display System
+- **Resolution Detection**: Automatic screen size detection
+- **Image Scaling**: All backgrounds scaled to fit screen
+- **Fullscreen Mode**: `pygame.FULLSCREEN | pygame.NOFRAME`
+- **Cross-Platform**: Works on various screen sizes
 
-### On Regular Computer
-To start the game, run:
-```bash
-python main.py
-```
+### Game States
+- **START_MENU**: Main choice screen
+- **TURTLE_PAGE**: Numerology realm
+- **CRAB_PAGE**: Spiritual wisdom realm
+- **RAT_PAGE**: Love and passion realm
 
-### On Raspberry Pi
-1. Make sure you have X11 running:
-```bash
-echo $DISPLAY  # Should show :0 or similar
-```
+## 🎨 Customization
 
-2. If X11 is not running, start it:
-```bash
-startx
-```
+### Adding New Fortunes
+- **Turtle**: Edit `turtle_fortunes.py`
+- **Crab**: Edit `fortunes.py`
+- **Rat**: Edit `rat_fortunes.py`
 
-3. Run the game:
-```bash
-python3 main.py
-```
+### Voice Adjustments
+- **Rate**: Speed of speech (`-r` parameter)
+- **Pitch**: Voice tone (`-p` parameter)
+- **Voice Type**: Different voice personalities (`-t` parameter)
 
-## Deploying to Raspberry Pi
+### Background Images
+- Replace `.jpg` files to change visual themes
+- Images automatically scale to screen size
+- Maintain aspect ratio for best results
 
-### Method 1: Using SCP (Secure Copy)
-1. From your development machine, use scp to copy the files:
-```bash
-scp -r /path/to/crab_of_fortune pi@raspberry_pi_ip:/home/pi/
-```
+## 🐛 Troubleshooting
 
-### Method 2: Using Git
-1. On your Raspberry Pi, install git:
-```bash
-sudo apt-get install git
-```
+### Audio Issues
+- Check if `spd-say` is installed: `which spd-say`
+- Verify audio devices: `aplay -l`
+- Check volume levels: `amixer scontrols`
 
-2. Clone your repository:
-```bash
-git clone https://your-repository-url.git
-cd crab_of_fortune
-```
+### Display Issues
+- Ensure Pygame is properly installed
+- Check screen resolution detection
+- Verify image files exist and are readable
 
-### Method 3: Using USB Drive
-1. Copy the project folder to a USB drive
-2. Plug the drive into your Raspberry Pi
-3. Mount and copy the files:
-```bash
-sudo mount /dev/sda1 /mnt/usb  # Adjust device name as needed
-cp -r /mnt/usb/crab_of_fortune ~/
-```
+### Performance Issues
+- Close unnecessary applications on Pi
+- Ensure adequate power supply
+- Check CPU/memory usage
 
-## How to Play
-1. Launch the game
-2. Click the "Tell My Fortune!" button (or tap on touchscreen)
-3. The wise crab will reveal your spiritual fortune in a message bubble
-4. Click "🎤 Hear Your Fortune" to hear your fortune spoken aloud! 🎤
-5. Click again for a new fortune!
-6. Press ESC to exit the game
+## 🤝 Contributing
 
-## Controls
-- Click/tap the button to get a fortune
-- Press ESC key or close window to exit
-- Works with mouse, keyboard, or touchscreen
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-## Requirements
-- Python 3.x
-- Pygame 2.5.2
-- spd-say (for text-to-speech)
-- For Raspberry Pi: SDL2 libraries + audio system
+## 📝 License
 
-## Testing Audio System
+This project is open source. Feel free to use, modify, and distribute.
 
-Before running the main game, test the audio system:
-```bash
-python3 test_audio.py
-```
+## 🙏 Acknowledgments
 
-This will verify that text-to-speech is working correctly.
+- **Artwork**: Beautiful background images for immersive experience
+- **Pygame Community**: Excellent game development framework
+- **Speech Dispatcher**: Reliable text-to-speech system
+- **Raspberry Pi Foundation**: Amazing platform for creative projects
 
-## Troubleshooting Raspberry Pi
+## 🚀 Future Enhancements
 
-If you encounter display issues:
-1. Check if X11 is running:
-```bash
-echo $DISPLAY
-```
+- [ ] Additional animal realms
+- [ ] Music and sound effects
+- [ ] Fortune history tracking
+- [ ] Multi-language support
+- [ ] Network multiplayer features
+- [ ] Custom fortune creation interface
 
-2. If using SSH, enable X11 forwarding:
-```bash
-ssh -X pi@raspberry_pi_ip
-```
+---
 
-3. For touchscreen issues:
-```bash
-sudo apt-get install xserver-xorg-input-evdev
-sudo cp /usr/share/X11/xorg.conf.d/10-evdev.conf /usr/share/X11/xorg.conf.d/45-evdev.conf
-```
-
-4. For display driver issues:
-```bash
-sudo raspi-config
-# Navigate to "Advanced Options" > "GL Driver" > Select "Full KMS"
-``` 
+**🌟 May the wisdom of the Crab, Turtle, and Rat guide your path! 🌟** 
