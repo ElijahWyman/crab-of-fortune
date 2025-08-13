@@ -3,76 +3,101 @@
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Get the directory where the script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-echo -e "${YELLOW}Starting Crab of Fortune installation on Raspberry Pi...${NC}"
+echo -e "${GREEN}Starting Crab of Fortune installation on Ubuntu 24 LTS...${NC}\n"
 
 # Update package list
-echo -e "\n${YELLOW}Updating package list...${NC}"
-sudo apt-get update || {
-    echo -e "${RED}Failed to update package list${NC}"
-    exit 1
-}
+echo -e "${GREEN}Updating package list...${NC}"
+sudo apt update
 
 # Install required packages
-echo -e "\n${YELLOW}Installing required packages...${NC}"
-sudo apt-get install -y python3-pip python3-pygame python3-venv || {
-    echo -e "${RED}Failed to install required packages${NC}"
-    exit 1
-}
+echo -e "${GREEN}Installing required packages...${NC}"
+sudo apt install -y \
+    python3-pip \
+    python3-pygame \
+    python3-venv \
+    cups \
+    cups-daemon \
+    cups-client \
+    python3-cups \
+    libcups2-dev \
+    printer-driver-brlaser \
+    libusb-1.0-0 \
+    usbutils \
+    espeak-ng \
+    pulseaudio \
+    pulseaudio-utils
 
-# Create virtual environment
-echo -e "\n${YELLOW}Creating Python virtual environment...${NC}"
-python3 -m venv "${SCRIPT_DIR}/venv" || {
-    echo -e "${RED}Failed to create virtual environment${NC}"
-    exit 1
-}
+# Set up CUPS
+echo -e "${GREEN}Setting up CUPS...${NC}"
+sudo usermod -a -G lpadmin $USER
+sudo sed -i 's/Listen localhost:631/Port 631/' /etc/cups/cupsd.conf
+sudo systemctl enable cups
+sudo systemctl restart cups
 
-# Activate virtual environment and install dependencies
-echo -e "\n${YELLOW}Installing Python dependencies in virtual environment...${NC}"
-source "${SCRIPT_DIR}/venv/bin/activate"
-pip install -r "${SCRIPT_DIR}/requirements.txt" || {
-    echo -e "${RED}Failed to install Python dependencies${NC}"
-    deactivate
-    exit 1
-}
-deactivate
+# Wait for CUPS to start
+echo -e "${GREEN}Waiting for CUPS to start...${NC}"
+sleep 5
 
-# Check if X11 is running
-echo -e "\n${YELLOW}Checking X11 status...${NC}"
-if [ -z "$DISPLAY" ]; then
-    echo -e "${YELLOW}X11 is not running. You may need to run 'startx' before running the game.${NC}"
-fi
+# Check CUPS status
+echo -e "${GREEN}Checking CUPS status...${NC}"
+lpstat -t || echo "No printers configured yet"
 
-# Make main.py executable
-chmod +x "${SCRIPT_DIR}/main.py" || {
-    echo -e "${RED}Failed to make main.py executable${NC}"
-    exit 1
-}
+# Set up audio system
+echo -e "${GREEN}Setting up audio system...${NC}"
+sudo usermod -a -G audio $USER
+sudo usermod -a -G pulse $USER
+sudo usermod -a -G pulse-access $USER
 
-# Create a launcher script
-echo -e "\n${YELLOW}Creating launcher script...${NC}"
-cat > "${SCRIPT_DIR}/run_game.sh" << EOL
+# Configure audio
+echo -e "${GREEN}Configuring audio...${NC}"
+pactl set-sink-volume @DEFAULT_SINK@ 70%
+pactl set-source-volume @DEFAULT_SOURCE@ 70%
+
+# Create Python virtual environment
+echo -e "${GREEN}Creating Python virtual environment...${NC}"
+python3 -m venv venv
+source venv/bin/activate
+
+# Install Python dependencies
+echo -e "${GREEN}Installing Python dependencies...${NC}"
+pip install -r requirements.txt
+pip install brother_ql
+
+# Create launcher script
+echo -e "${GREEN}Creating launcher script...${NC}"
+cat > run_game.sh << 'EOF'
 #!/bin/bash
-cd "$(dirname "\$0")"
+cd "$(dirname "$0")"
 source venv/bin/activate
 python3 main.py
-deactivate
-EOL
+EOF
+chmod +x run_game.sh
 
-chmod +x "${SCRIPT_DIR}/run_game.sh" || {
-    echo -e "${RED}Failed to make launcher script executable${NC}"
-    exit 1
-}
+echo -e "${GREEN}Installation completed successfully!${NC}"
+echo "You can now run the game with:"
+echo "./run_game.sh"
 
-echo -e "\n${GREEN}Installation completed successfully!${NC}"
-echo -e "${GREEN}You can now run the game with:${NC}"
-echo -e "./run_game.sh"
-echo -e "\n${YELLOW}Note: If you see a blank screen, try:${NC}"
-echo -e "1. Run 'startx' first"
-echo -e "2. Make sure you're running on the Pi's desktop environment"
-echo -e "3. Check the README.md for troubleshooting tips" 
+# Final status check
+echo -e "\n${GREEN}Final Status Check:${NC}"
+echo "CUPS Status:"
+systemctl status cups
+echo -e "\nPrinter Status:"
+lpstat -t || echo "No printers configured yet"
+echo -e "\nUSB Devices:"
+lsusb
+echo -e "\nUSB Permissions:"
+ls -l /dev/usb/lp* 2>/dev/null || echo "No USB printer device found"
+ls -l /dev/bus/usb/*/* 2>/dev/null
+
+# Test brother_ql installation
+echo -e "\n${GREEN}Testing brother_ql installation:${NC}"
+brother_ql --version
+
+# Test audio system
+echo -e "\n${GREEN}Testing audio system:${NC}"
+espeak-ng --version || echo "espeak-ng not found"
+pactl list sinks short | head -1 || echo "No audio sinks found"
+
+echo -e "\n${GREEN}Installation and setup complete!${NC}"

@@ -3,11 +3,12 @@
 A fun fortune-telling game featuring a friendly crab who predicts your future!
 
 ## Features
-- Interactive fortune-telling experience
-- Cute crab character
-- Beach-themed interface
-- Hover effects and smooth animations
-- Random fortune generation
+- **Spiritual fortune-telling experience** - Deep, meaningful wisdom
+- **Ancient crab wisdom** - Connecting to timeless knowledge
+- **Beautiful, clean interface** - Modern design with nostalgic charm
+- **Text-to-speech audio** - Hear your fortune spoken aloud 🎤
+- **Spiritual depth** - Fortunes that speak to the soul
+- **Nostalgic themes** - Longing for simpler, more meaningful times
 - Raspberry Pi compatible!
 
 ## Installation
@@ -87,9 +88,10 @@ cp -r /mnt/usb/crab_of_fortune ~/
 ## How to Play
 1. Launch the game
 2. Click the "Tell My Fortune!" button (or tap on touchscreen)
-3. The wise crab will reveal your fortune in a message bubble
-4. Click again for a new fortune!
-5. Press ESC to exit the game
+3. The wise crab will reveal your spiritual fortune in a message bubble
+4. Click "🎤 Hear Your Fortune" to hear your fortune spoken aloud! 🎤
+5. Click again for a new fortune!
+6. Press ESC to exit the game
 
 ## Controls
 - Click/tap the button to get a fortune
@@ -99,7 +101,17 @@ cp -r /mnt/usb/crab_of_fortune ~/
 ## Requirements
 - Python 3.x
 - Pygame 2.5.2
-- For Raspberry Pi: SDL2 libraries
+- spd-say (for text-to-speech)
+- For Raspberry Pi: SDL2 libraries + audio system
+
+## Testing Audio System
+
+Before running the main game, test the audio system:
+```bash
+python3 test_audio.py
+```
+
+This will verify that text-to-speech is working correctly.
 
 ## Troubleshooting Raspberry Pi
 
